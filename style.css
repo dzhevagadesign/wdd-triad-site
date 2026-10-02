@@ -178,7 +178,7 @@ img { display: block; }
   font-size: 16px; font-weight: 300; line-height: 1.35; color: var(--fg2);
 }
 .checks li::before { content: ""; flex: none; width: 22px; height: 22px; background: url(assets/check.svg) center / 22px 22px no-repeat; }
-.card--amber .checks li::before, .card--mist .checks li::before { background-image: url(assets/check-dark.svg); }
+.card--amber .checks li::before, .card--mist .checks li::before { background-image: url(assets/check-green.svg); }
 .curtain__h, .checks li { opacity: 0; transition: opacity .2s; }
 .card:hover .curtain__h, .card:focus-within .curtain__h,
 .card:hover .checks li, .card:focus-within .checks li { opacity: 1; transition: opacity .45s var(--ease-out); }
