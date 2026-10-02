@@ -68,7 +68,8 @@
   }
 
   function render() {
-    const s = clamp(-section.getBoundingClientRect().top, 0, (n - 1) * pitch);
+    const stickTop = parseFloat(getComputedStyle(pin).top); // pin sticks under the header
+    const s = clamp(stickTop - section.getBoundingClientRect().top, 0, (n - 1) * pitch);
     let depth = 0;
     for (let k = n - 1; k >= 0; k--) {
       const y = Math.max(0, k * pitch - s);

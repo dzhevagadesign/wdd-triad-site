@@ -270,7 +270,7 @@ img { display: block; }
    in a cascade (main.js). The section height is set in main.js; FAQ follows right after the last card. */
 .trust { position: relative; background: #fff; }
 .trust__pin {
-  position: sticky; top: 0;
+  position: sticky; top: 76px; /* sticks under the fixed header (16 + 60), keeping the 80px padding below it */
   display: flex; flex-direction: column; align-items: center; gap: 80px;
   padding: 80px 80px 0;
 }
