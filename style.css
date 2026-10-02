@@ -72,19 +72,18 @@ img { display: block; }
 
 .card {
   --bg: var(--green); --fg: #fff; --fg2: var(--mist);
-  position: relative; overflow: hidden;
+  position: relative;
   border-radius: 30px; background: var(--bg); outline: none;
   z-index: 1;
-  transition: height var(--grow) var(--ease), top var(--grow) var(--ease), z-index 0s var(--grow);
+  transition: z-index 0s var(--grow); /* stay on top until the curtain has rolled back */
 }
-/* the original content keeps its collapsed size and position while the card grows */
+/* the card itself never changes size; only the curtain (.drawer) covers the whole column */
 .card__body {
-  position: absolute; left: 0; right: 0; top: 0; height: 328px;
+  position: absolute; inset: 0; overflow: hidden; border-radius: 30px;
   display: flex; flex-direction: column; justify-content: space-between; padding: 30px;
 }
 .card__body::after { content: ""; flex: none; height: 60px; } /* space reserved for the CTA */
-.card--bottom .card__body { top: auto; bottom: 0; }
-.card--tall .card__body { height: 100%; justify-content: flex-start; gap: 30px; }
+.card--tall .card__body { justify-content: flex-start; gap: 30px; }
 .card--green { --bg: var(--green); --bg-rgb: 24, 76, 60; }
 .card--teal { --bg: var(--teal); --bg-rgb: 48, 104, 104; }
 .card--amber { --bg: var(--amber); --bg-rgb: 245, 173, 45; --fg: var(--ink); --fg2: var(--green); }
@@ -95,11 +94,7 @@ img { display: block; }
 .card--top { top: 0; }
 .card--bottom { bottom: 0; }
 
-.card:hover, .card:focus-within {
-  z-index: 5; transition: height var(--grow) var(--ease), top var(--grow) var(--ease), z-index 0s;
-}
-.card--top:hover, .card--top:focus-within,
-.card--bottom:hover, .card--bottom:focus-within { height: 100%; }
+.card:hover, .card:focus-within { z-index: 5; transition: z-index 0s; }
 
 .card__title { display: flex; flex-direction: column; gap: 24px; }
 .card__title h3 { font-size: 32px; line-height: 1; letter-spacing: -.96px; color: var(--fg); }
@@ -143,17 +138,25 @@ img { display: block; }
 /* magnifier (Розвивати проєкт) */
 .art-loupe img { position: absolute; left: .5px; top: 39px; width: 154px; height: 153px; object-fit: cover; }
 
-/* ---------- curtain (hover details): slides up from the bottom, over the content ---------- */
-/* dim over the card's own content: shows up as soon as the curtain starts moving */
-.card::before {
-  content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+/* ---------- curtain (hover details) ----------
+   .drawer spans the whole column (the card plus the one above/below it) and clips the curtain,
+   which slides up from its bottom over everything. The dim shows up as soon as it starts moving. */
+.drawer {
+  position: absolute; left: 0; right: 0; z-index: 2;
+  overflow: hidden; border-radius: 30px; pointer-events: none;
+}
+.card--tall .drawer { top: 0; bottom: 0; }
+.card--top .drawer { top: 0; height: calc(200% + 20px); }
+.card--bottom .drawer { bottom: 0; height: calc(200% + 20px); }
+.drawer::before {
+  content: ""; position: absolute; inset: 0;
   background: rgba(22, 39, 40, .35); opacity: 0;
   transition: opacity .45s var(--ease) .1s;
 }
-.card:hover::before, .card:focus-within::before { opacity: 1; transition: opacity .3s ease-out; }
+.card:hover .drawer::before, .card:focus-within .drawer::before { opacity: 1; transition: opacity .3s ease-out; }
 
 .curtain {
-  position: absolute; inset: 0; z-index: 2;
+  position: absolute; inset: 0;
   padding: 30px; border-radius: 30px;
   background: rgba(var(--bg-rgb), .9);
   -webkit-backdrop-filter: blur(5px); backdrop-filter: blur(5px);
@@ -188,7 +191,8 @@ img { display: block; }
   height: 60px; min-width: 60px; padding: 0 19px;
   display: flex; align-items: center; justify-content: flex-end; gap: 0;
   border-radius: 100px; background: var(--ink); color: #fff;
-  transition: padding var(--grow) var(--ease), gap var(--grow) var(--ease), background-color .25s;
+  transition: padding var(--grow) var(--ease), gap var(--grow) var(--ease),
+              transform var(--grow) var(--ease), background-color .25s;
 }
 .cta__label {
   max-width: 0; overflow: hidden; white-space: nowrap; opacity: 0;
@@ -197,6 +201,8 @@ img { display: block; }
 }
 .cta__arrow { flex: none; width: 22.18px; height: 19.1px; transform: rotate(180deg); }
 .card:hover .cta, .card:focus-within .cta { padding: 0 19px 0 24px; gap: 20px; }
+/* a top card's curtain is taller than the card, so its CTA rides down to the bottom of the column */
+.card--top:hover .cta, .card--top:focus-within .cta { transform: translateY(348px); }
 .card:hover .cta__label, .card:focus-within .cta__label { max-width: 220px; opacity: 1; transition: max-width var(--grow) var(--ease), opacity .4s .15s; }
 .cta:hover { background: #0b1617; }
 
@@ -216,7 +222,7 @@ img { display: block; }
 .js .grid:not(.is-in) .art-blocks i,
 .js .grid:not(.is-in) .cta { opacity: 0; }
 
-.js .grid.is-in .cta { animation: pop-in .6s cubic-bezier(.34, 1.56, .64, 1) calc(var(--d) + .75s) both; }
+.js .grid.is-in .cta { animation: pop-in .6s cubic-bezier(.34, 1.56, .64, 1) calc(var(--d) + .75s) backwards; }
 @keyframes pop-in { from { opacity: 0; transform: scale(.4); } }
 
 /* gauge: track fades, ticks and the value arc sweep, knob rides the arc, number counts (main.js) */
