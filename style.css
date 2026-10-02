@@ -205,8 +205,23 @@ img { display: block; }
 }
 .cta__arrow { flex: none; width: 22.18px; height: 19.1px; transform: rotate(180deg); }
 .card:hover .cta, .card:focus-within .cta { padding: 0 19px 0 24px; gap: 20px; }
-/* a top card's curtain is taller than the card, so its CTA rides down to the bottom of the column */
-.card--top:hover .cta, .card--top:focus-within .cta { transform: translateY(348px); }
+/* A top card's curtain drops from above and ends at the bottom of the column, so its CTA moves down
+   too — but only once the curtain's edge has passed it by the 30px padding (half-way through the
+   curtain's easing), then it rides 30px above that edge (the out-half of the same curve) and only
+   then opens into the pill. On leave it all runs backwards: it closes and rides up ahead of the edge. */
+.card--top .cta {
+  transition: transform calc(var(--grow) / 2) cubic-bezier(.32, 0, .67, 0),
+              padding calc(var(--grow) / 2) var(--ease), gap calc(var(--grow) / 2) var(--ease), background-color .25s;
+}
+.card--top .cta__label { transition: max-width calc(var(--grow) / 2) var(--ease), opacity .2s; }
+.card--top:hover .cta, .card--top:focus-within .cta {
+  transform: translateY(348px);
+  transition: transform calc(var(--grow) / 2) cubic-bezier(.33, 1, .68, 1) calc(var(--grow) / 2),
+              padding .45s var(--ease) var(--grow), gap .45s var(--ease) var(--grow), background-color .25s;
+}
+.column .card--top:hover .cta__label, .column .card--top:focus-within .cta__label { /* beats the generic .card:hover rule below */
+  transition: max-width .45s var(--ease) var(--grow), opacity .35s calc(var(--grow) + .1s);
+}
 .card:hover .cta__label, .card:focus-within .cta__label { max-width: 220px; opacity: 1; transition: max-width var(--grow) var(--ease), opacity .4s .15s; }
 .cta:hover { background: #0b1617; }
 
