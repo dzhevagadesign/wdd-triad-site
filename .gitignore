@@ -1,0 +1,3 @@
+# source renders and Photoshop files live next to the site but are not part of it
+magnific__*
+*.psd
