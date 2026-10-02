@@ -1,5 +1,41 @@
 /* WDD Triad landing */
 
+/* ---------- hero cards: entrance ----------
+   Starts the CSS entrance (.is-in) once the grid is on screen and counts the gauge 0.00 → 0.75
+   in step with the arc (same delay, duration and easing as .g-e5 in style.css). */
+(() => {
+  const grid = document.querySelector('[data-intro]');
+  if (!grid) return;
+  const value = grid.querySelector('.g-value');
+  const target = parseFloat(value.textContent);
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const ease = t => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+
+  function count() {
+    if (reduce) return;
+    const delay = 550, dur = 1500;
+    const t0 = performance.now() + delay;
+    value.textContent = (0).toFixed(2);
+    (function tick(now) {
+      const t = Math.min(1, Math.max(0, (now - t0) / dur));
+      value.textContent = (target * ease(t)).toFixed(2);
+      if (t < 1) requestAnimationFrame(tick);
+    })(performance.now());
+  }
+
+  // plain position check rather than IntersectionObserver: it runs right away on load, so the
+  // cards can never stay hidden if the observer is late or never fires
+  function check() {
+    const r = grid.getBoundingClientRect();
+    if (r.top > innerHeight * 0.85 || r.bottom < 0) return;
+    removeEventListener('scroll', check);
+    grid.classList.add('is-in');
+    count();
+  }
+  addEventListener('scroll', check, { passive: true });
+  check();
+})();
+
 /* ---------- "Дані, яким можна довіряти": card stack ----------
    While .trust__pin is stuck, scroll distance s moves the cards like a grid (card height + 80px gap):
    card k sits at y = k·PITCH − s and parks at 0. Arrival of card j is a = 1 − y/PITCH. A card's depth

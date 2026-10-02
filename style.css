@@ -200,6 +200,86 @@ img { display: block; }
 .card:hover .cta__label, .card:focus-within .cta__label { max-width: 220px; opacity: 1; transition: max-width var(--grow) var(--ease), opacity .4s .15s; }
 .cta:hover { background: #0b1617; }
 
+/* ---------- hero cards: entrance ----------
+   main.js adds .is-in to the grid once it is on screen. Cards rise in a cascade (--d), then each
+   illustration plays its own entrance; everything is hidden only when JS is running (html.js). */
+@property --sweep { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+
+.grid > .card--tall { --d: 0s; }
+.grid > .column:nth-child(2) .card--top { --d: .1s; }
+.grid > .column:nth-child(3) .card--top { --d: .18s; }
+.grid > .column:nth-child(2) .card--bottom { --d: .26s; }
+.grid > .column:nth-child(3) .card--bottom { --d: .34s; }
+
+.js .grid:not(.is-in) .card,
+.js .grid:not(.is-in) .card__art > *,
+.js .grid:not(.is-in) .art-chart .ch-cols i,
+.js .grid:not(.is-in) .art-blocks i,
+.js .grid:not(.is-in) .cta { opacity: 0; }
+
+.js .grid.is-in .card { animation: card-in 1s var(--ease-out) var(--d) both; }
+@keyframes card-in { from { opacity: 0; transform: translateY(56px) scale(.97); } }
+
+.js .grid.is-in .cta { animation: pop-in .6s cubic-bezier(.34, 1.56, .64, 1) calc(var(--d) + .75s) both; }
+@keyframes pop-in { from { opacity: 0; transform: scale(.4); } }
+
+/* gauge: track fades, ticks and the value arc sweep, knob rides the arc, number counts (main.js) */
+.js .grid.is-in .art-gauge .g-e4 { animation: fade-in .8s ease-out calc(var(--d) + .3s) both; }
+.js .art-gauge .g-ticks {
+  -webkit-mask: conic-gradient(from 225deg at 50% 58.58%, #000 var(--sweep), transparent 0);
+          mask: conic-gradient(from 225deg at 50% 58.58%, #000 var(--sweep), transparent 0);
+}
+.js .art-gauge .g-e5 img {
+  -webkit-mask: conic-gradient(from 225deg at 58.58% 58.58%, #000 var(--sweep), transparent 0);
+          mask: conic-gradient(from 225deg at 58.58% 58.58%, #000 var(--sweep), transparent 0);
+}
+.js .grid.is-in .art-gauge .g-ticks { animation: sweep-ticks 1.3s var(--ease) calc(var(--d) + .35s) both; }
+.js .grid.is-in .art-gauge .g-e5 { opacity: 1; }
+.js .grid.is-in .art-gauge .g-e5 img { animation: sweep-arc 1.5s var(--ease) calc(var(--d) + .55s) both; }
+.art-gauge .g-knob { transform-origin: -89px 123px; } /* centre of the arc (177, 240) */
+.js .grid.is-in .art-gauge .g-knob { animation: knob-in 1.5s var(--ease) calc(var(--d) + .55s) both; }
+.js .grid.is-in .art-gauge .g-value { animation: fade-in .5s ease-out calc(var(--d) + .55s) both; }
+@keyframes sweep-ticks { from { --sweep: 0deg; } to { --sweep: 270deg; } }
+@keyframes sweep-arc { from { --sweep: 0deg; } to { --sweep: 180deg; } }
+@keyframes knob-in { 0% { opacity: 0; transform: rotate(-180deg); } 12% { opacity: 1; } 100% { opacity: 1; transform: none; } }
+@keyframes fade-in { from { opacity: 0; } }
+
+/* land plot drops in and settles */
+.js .grid.is-in .art-plot img { animation: plot-in 1.1s var(--ease-out) calc(var(--d) + .35s) both; }
+@keyframes plot-in {
+  0% { opacity: 0; transform: translate(-24px, 40px) scale(.9) rotate(-3deg); }
+  60% { opacity: 1; transform: translate(2px, -4px) scale(1.01) rotate(.5deg); }
+  100% { opacity: 1; transform: none; }
+}
+
+/* chart: guide lines fade, bars grow from the baseline one after another */
+.js .grid.is-in .art-chart .ch-line { animation: fade-in .6s ease-out calc(var(--d) + .3s) both; }
+.js .grid.is-in .art-chart .ch-bars { opacity: 1; }
+.art-chart .ch-cols i { transform-origin: 50% 100%; }
+.js .grid.is-in .art-chart .ch-cols i { animation: bar-in .8s var(--ease-out) both; }
+.js .grid.is-in .art-chart .ch-group:nth-child(1) .ch-cols i:nth-child(1) { animation-delay: calc(var(--d) + .4s); }
+.js .grid.is-in .art-chart .ch-group:nth-child(1) .ch-cols i:nth-child(2) { animation-delay: calc(var(--d) + .5s); }
+.js .grid.is-in .art-chart .ch-group:nth-child(2) .ch-cols i:nth-child(1) { animation-delay: calc(var(--d) + .6s); }
+.js .grid.is-in .art-chart .ch-group:nth-child(2) .ch-cols i:nth-child(2) { animation-delay: calc(var(--d) + .7s); }
+@keyframes bar-in { from { opacity: 0; transform: scaleY(0); } 40% { opacity: 1; } to { opacity: 1; transform: none; } }
+
+/* building blocks fall into place */
+.js .grid.is-in .art-blocks i { animation: block-in .7s cubic-bezier(.34, 1.4, .64, 1) both; }
+.js .grid.is-in .art-blocks .b1 { animation-delay: calc(var(--d) + .4s); }
+.js .grid.is-in .art-blocks .b2 { animation-delay: calc(var(--d) + .52s); }
+.js .grid.is-in .art-blocks .b3 { animation-delay: calc(var(--d) + .7s); }
+@keyframes block-in { from { opacity: 0; transform: translateY(-70px); } 30% { opacity: 1; } to { opacity: 1; transform: none; } }
+
+/* magnifier slides in and takes a little look around */
+.art-loupe img { transform-origin: 30% 90%; }
+.js .grid.is-in .art-loupe img { animation: loupe-in 1.4s var(--ease-out) calc(var(--d) + .35s) both; }
+@keyframes loupe-in {
+  0% { opacity: 0; transform: translate(-50px, 80px) rotate(-14deg); }
+  45% { opacity: 1; transform: translate(4px, -4px) rotate(3deg); }
+  70% { transform: translate(-2px, 1px) rotate(-1.5deg); }
+  100% { opacity: 1; transform: none; }
+}
+
 /* ---------- trust: card stack ----------
    Normal section paddings. While the stack plays, .trust__pin (title + front card) sticks to the
    top of the window; the following cards sit under it like a grid (80px gap), ride up on scroll and
@@ -261,5 +341,8 @@ img { display: block; }
 .footer a:hover { opacity: .7; }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { transition-duration: .01ms !important; transition-delay: 0s !important; }
+  *, *::before, *::after {
+    transition-duration: .01ms !important; transition-delay: 0s !important;
+    animation-duration: .01ms !important; animation-delay: 0s !important;
+  }
 }
