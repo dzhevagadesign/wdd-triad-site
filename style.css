@@ -135,8 +135,18 @@ img { display: block; }
 .art-blocks .b2 { left: 86.5px; top: 88px; border: 1.2px solid rgba(255,255,255,.65); }
 .art-blocks .b3 { left: 40.5px; top: 46px; background: linear-gradient(270deg, rgba(255,255,255,.65), rgba(255,255,255,.35)); }
 
-/* magnifier (Розвивати проєкт) */
-.art-loupe img { position: absolute; left: .5px; top: 39px; width: 154px; height: 153px; object-fit: cover; }
+/* magnifier over a line chart (Розвивати проєкт): thin line, glass, and the same line 3× inside the lens */
+.art-loupe > * { position: absolute; }
+.art-loupe .lp-line { left: .5px; top: 46px; width: 252px; height: 93px; }
+.art-loupe .lp-glass { left: .5px; top: 39px; width: 154px; height: 153px; object-fit: cover; }
+.art-loupe .lp-zoom {
+  left: -165.5px; top: -36px; width: 756px; height: 279px;
+  -webkit-mask: url(assets/loupe-lens-mask.svg) 218px 79px / 99px 99px no-repeat;
+          mask: url(assets/loupe-lens-mask.svg) 218px 79px / 99px 99px no-repeat;
+}
+.art-loupe .lp-line img, .art-loupe .lp-zoom img {
+  position: absolute; top: -.54%; right: 0; bottom: -.45%; left: -.11%; width: 100.11%; height: 100.99%;
+}
 
 /* ---------- curtain (hover details) ----------
    .drawer spans the whole column (the card plus the one above/below it) and clips the curtain,
@@ -267,7 +277,7 @@ img { display: block; }
 
 /* raster illustrations (plot, magnifier): a short rise with a fade, nothing more */
 .js .grid.is-in .art-plot img,
-.js .grid.is-in .art-loupe img { animation: rise-in .9s var(--ease-out) calc(var(--d) + .2s) both; }
+.js .grid.is-in .art-loupe > * { animation: rise-in .9s var(--ease-out) calc(var(--d) + .2s) both; }
 @keyframes rise-in { from { opacity: 0; transform: translateY(24px); } }
 
 /* chart: guide lines fade, bars grow from the baseline one after another */
