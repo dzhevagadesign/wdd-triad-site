@@ -140,7 +140,9 @@ img { display: block; }
 
 /* ---------- curtain (hover details) ----------
    .drawer spans the whole column (the card plus the one above/below it) and clips the curtain,
-   which slides up from its bottom over everything. The dim shows up as soon as it starts moving. */
+   which slides in from the card's side: down for a top card, up for a bottom one (and the tall one).
+   The dim lies on each card of the column in its own rounded shape, never over the gap between them,
+   and shows up as soon as the curtain starts moving. */
 .drawer {
   position: absolute; left: 0; right: 0; z-index: 2;
   overflow: hidden; border-radius: 30px; pointer-events: none;
@@ -148,12 +150,13 @@ img { display: block; }
 .card--tall .drawer { top: 0; bottom: 0; }
 .card--top .drawer { top: 0; height: calc(200% + 20px); }
 .card--bottom .drawer { bottom: 0; height: calc(200% + 20px); }
-.drawer::before {
-  content: ""; position: absolute; inset: 0;
+.card::before {
+  content: ""; position: absolute; inset: 0; z-index: 1; border-radius: inherit; pointer-events: none;
   background: rgba(22, 39, 40, .35); opacity: 0;
   transition: opacity .45s var(--ease) .1s;
 }
-.card:hover .drawer::before, .card:focus-within .drawer::before { opacity: 1; transition: opacity .3s ease-out; }
+.column:has(.card:hover, .card:focus-within) .card::before,
+.card--tall:hover::before, .card--tall:focus-within::before { opacity: 1; transition: opacity .3s ease-out; }
 
 .curtain {
   position: absolute; inset: 0;
@@ -165,6 +168,7 @@ img { display: block; }
   transition: transform var(--grow) var(--ease);
   pointer-events: none;
 }
+.card--top .curtain { transform: translateY(-101%); }
 .card:hover .curtain, .card:focus-within .curtain { transform: none; pointer-events: auto; }
 
 .curtain__h { font-size: 36px; line-height: 1; letter-spacing: -1.08px; color: var(--fg); }
