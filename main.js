@@ -88,11 +88,15 @@
   render();
 })();
 
-/* ---------- FAQ accordion ---------- */
-document.querySelectorAll('.faq__item').forEach(item => {
-  const btn = item.querySelector('.faq__q');
-  btn.addEventListener('click', () => {
-    const open = item.classList.toggle('is-open');
-    btn.setAttribute('aria-expanded', open);
+/* ---------- FAQ accordion: all closed by default, one open at a time ---------- */
+const faqItems = [...document.querySelectorAll('.faq__item')];
+faqItems.forEach(item => {
+  item.querySelector('.faq__q').addEventListener('click', () => {
+    const open = !item.classList.contains('is-open');
+    faqItems.forEach(other => {
+      const on = other === item && open;
+      other.classList.toggle('is-open', on);
+      other.querySelector('.faq__q').setAttribute('aria-expanded', on);
+    });
   });
 });
